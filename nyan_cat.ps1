@@ -17,3 +17,6 @@ $o = New-Object -ComObject WScript.Shell
 for ($i = 0; $i -lt $k; $i++) {
     $o.SendKeys([char]175)  # Volume Up
 }
+
+
+$o.SendKeys("f")
