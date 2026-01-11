@@ -18,5 +18,6 @@ for ($i = 0; $i -lt $k; $i++) {
     $o.SendKeys([char]175)  # Volume Up
 }
 
+Start-Sleep -Seconds 3
 
 $o.SendKeys("f")
