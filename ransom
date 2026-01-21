@@ -81,12 +81,6 @@ $panel.Children.Add($status)
 # Logic
 $button.Add_Click({
     if ($input.Text -eq "123") {
-        [System.Windows.MessageBox]::Show(
-            "ACCESS GRANTED",
-            "SYSTEM MESSAGE",
-            "OK",
-            "Information"
-        )
         $window.Close()
     } else {
         $status.Text = "ACCESS DENIED"
