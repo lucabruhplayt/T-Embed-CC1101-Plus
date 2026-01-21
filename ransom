@@ -1,65 +1,69 @@
 Add-Type -AssemblyName PresentationFramework
 
-# Main window
+# Window
 $window = New-Object System.Windows.Window
-$window.Title = "SYSTEM INTERFACE"
+$window.Title = "SYSTEM CONTROL INTERFACE"
 $window.WindowStyle = "None"
 $window.WindowState = "Maximized"
 $window.Topmost = $true
 $window.Background = [System.Windows.Media.Brushes]::Black
 $window.FontFamily = "Consolas"
 
-# Allow ESC to close
+# ESC always exits
 $window.Add_KeyDown({
-    if ($_.Key -eq "Escape") { $window.Close() }
+    if ($_.Key -eq "Escape") {
+        $window.Close()
+    }
 })
 
 # Root grid
 $grid = New-Object System.Windows.Controls.Grid
 $window.Content = $grid
 
-# Center panel
+# Center container
 $panel = New-Object System.Windows.Controls.StackPanel
 $panel.HorizontalAlignment = "Center"
 $panel.VerticalAlignment = "Center"
-$panel.Width = 600
+$panel.Width = 650
 $grid.Children.Add($panel)
 
-# Title text
-$title = New-Object System.Windows.Controls.TextBlock
-$title.Text = ">>> ACCESS CONTROL NODE <<<"
-$title.Foreground = "Red"
-$title.FontSize = 32
-$title.Margin = "0,0,0,20"
-$title.TextAlignment = "Center"
-$panel.Children.Add($title)
+# Header
+$header = New-Object System.Windows.Controls.TextBlock
+$header.Text = ">>> RESTRICTED SYSTEM NODE <<<"
+$header.Foreground = "Red"
+$header.FontSize = 36
+$header.TextAlignment = "Center"
+$header.Margin = "0,0,0,30"
+$panel.Children.Add($header)
 
-# Subtitle
-$subtitle = New-Object System.Windows.Controls.TextBlock
-$subtitle.Text = "ENTER AUTHORIZATION CODE"
-$subtitle.Foreground = "Red"
-$subtitle.FontSize = 16
-$subtitle.Margin = "0,0,0,20"
-$subtitle.TextAlignment = "Center"
-$panel.Children.Add($subtitle)
+# Prompt
+$prompt = New-Object System.Windows.Controls.TextBlock
+$prompt.Text = "ENTER AUTHORIZATION CODE"
+$prompt.Foreground = "Red"
+$prompt.FontSize = 18
+$prompt.TextAlignment = "Center"
+$prompt.Margin = "0,0,0,20"
+$panel.Children.Add($prompt)
 
-# Input box
-$box = New-Object System.Windows.Controls.TextBox
-$box.FontSize = 20
-$box.Height = 40
-$box.Background = "Black"
-$box.Foreground = "Red"
-$box.BorderBrush = "Red"
-$box.CaretBrush = "Red"
-$box.HorizontalContentAlignment = "Center"
-$box.Margin = "0,0,0,20"
-$panel.Children.Add($box)
+# Input
+$input = New-Object System.Windows.Controls.TextBox
+$input.FontSize = 22
+$input.Height = 45
+$input.Width = 300
+$input.Background = "Black"
+$input.Foreground = "Red"
+$input.BorderBrush = "Red"
+$input.CaretBrush = "Red"
+$input.HorizontalContentAlignment = "Center"
+$input.Margin = "0,0,0,20"
+$panel.Children.Add($input)
 
 # Button
 $button = New-Object System.Windows.Controls.Button
 $button.Content = "AUTHENTICATE"
 $button.FontSize = 18
 $button.Height = 45
+$button.Width = 200
 $button.Background = "Black"
 $button.Foreground = "Red"
 $button.BorderBrush = "Red"
@@ -70,14 +74,19 @@ $status = New-Object System.Windows.Controls.TextBlock
 $status.Text = ""
 $status.Foreground = "Red"
 $status.FontSize = 16
-$status.Margin = "0,20,0,0"
 $status.TextAlignment = "Center"
+$status.Margin = "0,20,0,0"
 $panel.Children.Add($status)
 
-# Button logic
+# Logic
 $button.Add_Click({
-    if ($box.Text -eq "123") {
-        [System.Windows.MessageBox]::Show("ACCESS GRANTED.")
+    if ($input.Text -eq "123") {
+        [System.Windows.MessageBox]::Show(
+            "ACCESS GRANTED",
+            "SYSTEM MESSAGE",
+            "OK",
+            "Information"
+        )
         $window.Close()
     } else {
         $status.Text = "ACCESS DENIED"
