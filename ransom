@@ -77,7 +77,7 @@ $panel.Children.Add($status)
 # Button logic
 $button.Add_Click({
     if ($box.Text -eq "123") {
-        [System.Windows.MessageBox]::Show("ACCESS GRANTED.`nYou got pranked.")
+        [System.Windows.MessageBox]::Show("ACCESS GRANTED.")
         $window.Close()
     } else {
         $status.Text = "ACCESS DENIED"
