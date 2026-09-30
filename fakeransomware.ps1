@@ -77,6 +77,7 @@ $button.Add_Click({
 })
 
 $window.Add_PreviewKeyDown({
+
     if ($_.Key -eq "Escape") {
         $_.Handled = $true
         $window.Close()
@@ -91,8 +92,42 @@ $window.Add_PreviewKeyDown({
             [System.Windows.Input.Key]::RWin
         )
 
+    $altPressed =
+        [System.Windows.Input.Keyboard]::IsKeyDown(
+            [System.Windows.Input.Key]::LeftAlt
+        ) -or
+        [System.Windows.Input.Keyboard]::IsKeyDown(
+            [System.Windows.Input.Key]::RightAlt
+        )
+
+    # Win + D
     if ($winPressed -and $_.Key -eq "D") {
         $_.Handled = $true
+        return
+    }
+
+    # Win + Tab
+    if ($winPressed -and $_.Key -eq "Tab") {
+        $_.Handled = $true
+        return
+    }
+
+    # Alt + F4
+    if ($altPressed -and $_.Key -eq "F4") {
+        $_.Handled = $true
+        return
+    }
+
+    # Alt + Tab
+    if ($altPressed -and $_.Key -eq "Tab") {
+        $_.Handled = $true
+        return
+    }
+
+    # Tab
+    if ($_.Key -eq "Tab") {
+        $_.Handled = $true
+        return
     }
 })
 
