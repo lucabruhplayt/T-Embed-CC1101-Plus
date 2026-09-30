@@ -4,7 +4,9 @@ $window = New-Object System.Windows.Window
 $window.Title = "SYSTEM LOCKED"
 $window.WindowStyle = "None"
 $window.WindowState = "Maximized"
+$window.ResizeMode = "NoResize"
 $window.Topmost = $true
+$window.ShowInTaskbar = $false
 $window.Background = "Black"
 $window.FontFamily = "Consolas"
 
@@ -65,7 +67,7 @@ $status.Margin = "0,20,0,0"
 $panel.Children.Add($status)
 
 $button.Add_Click({
-    if ($password.Password -eq "1234") {
+    if ($password.Password -eq "0000") {
         $window.Close()
     }
     else {
@@ -74,9 +76,23 @@ $button.Add_Click({
     }
 })
 
-$window.Add_KeyDown({
+$window.Add_PreviewKeyDown({
     if ($_.Key -eq "Escape") {
+        $_.Handled = $true
         $window.Close()
+        return
+    }
+
+    $winPressed =
+        [System.Windows.Input.Keyboard]::IsKeyDown(
+            [System.Windows.Input.Key]::LWin
+        ) -or
+        [System.Windows.Input.Keyboard]::IsKeyDown(
+            [System.Windows.Input.Key]::RWin
+        )
+
+    if ($winPressed -and $_.Key -eq "D") {
+        $_.Handled = $true
     }
 })
 
