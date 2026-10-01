@@ -1,4 +1,5 @@
 # Hard-to-escape Restricted System Interface
+# Only numbers work on the keyboard
 # Only closes when code "0000" is entered
 
 Add-Type -AssemblyName PresentationFramework
@@ -11,6 +12,30 @@ $ErrorActionPreference = "SilentlyContinue"
 $correctCode = "0000"
 $script:isAuthenticated = $false
 
+# --- Hide / Show Taskbar ---
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+public class Taskbar {
+    [DllImport("user32.dll")]
+    public static extern IntPtr FindWindow(string className, string windowName);
+    [DllImport("user32.dll")]
+    public static extern int ShowWindow(IntPtr hWnd, int nCmdShow);
+}
+"@
+
+function Hide-Taskbar {
+    $taskbar = [Taskbar]::FindWindow("Shell_TrayWnd", $null)
+    [Taskbar]::ShowWindow($taskbar, 0) | Out-Null
+}
+
+function Show-Taskbar {
+    $taskbar = [Taskbar]::FindWindow("Shell_TrayWnd", $null)
+    [Taskbar]::ShowWindow($taskbar, 5) | Out-Null
+}
+
+Hide-Taskbar
+
 # Create window
 $window = New-Object System.Windows.Window
 $window.Title = "SYSTEM CONTROL INTERFACE"
@@ -22,9 +47,22 @@ $window.FontFamily = "Consolas"
 $window.ShowInTaskbar = $false
 $window.ResizeMode = "NoResize"
 
-# Block Escape + Alt+F4
-$window.Add_KeyDown({
+# === BLOCK ALMOST ALL KEYS (only numbers + Backspace + Enter allowed) ===
+$window.Add_PreviewKeyDown({
     param($sender, $e)
+
+    $allowed = @(
+        "D0","D1","D2","D3","D4","D5","D6","D7","D8","D9",   # Top row numbers
+        "NumPad0","NumPad1","NumPad2","NumPad3","NumPad4",
+        "NumPad5","NumPad6","NumPad7","NumPad8","NumPad9",  # Numpad
+        "Back", "Return", "Enter"
+    )
+
+    if ($allowed -notcontains $e.Key.ToString()) {
+        $e.Handled = $true   # Block everything else
+    }
+
+    # Extra block for Alt+F4 and Escape
     if ($e.Key -eq "Escape" -or ($e.Key -eq "F4" -and $e.KeyboardDevice.Modifiers -eq "Alt")) {
         $e.Handled = $true
     }
@@ -38,13 +76,15 @@ $window.Add_Closing({
     }
 })
 
-# Force focus back if lost
+# Force focus + keep topmost
 $focusTimer = New-Object System.Windows.Threading.DispatcherTimer
-$focusTimer.Interval = [TimeSpan]::FromMilliseconds(300)
+$focusTimer.Interval = [TimeSpan]::FromMilliseconds(250)
 $focusTimer.Add_Tick({
-    if (-not $script:isAuthenticated -and -not $window.IsActive) {
+    if (-not $script:isAuthenticated) {
+        $window.Topmost = $false
+        $window.Topmost = $true
         $window.Activate()
-        $inputBox.Focus()
+        if ($inputBox) { $inputBox.Focus() }
     }
 })
 $focusTimer.Start()
@@ -136,6 +176,8 @@ $button.Add_Click({
         $button.IsEnabled = $false
         $focusTimer.Stop()
 
+        Show-Taskbar
+
         $closeTimer = New-Object System.Windows.Threading.DispatcherTimer
         $closeTimer.Interval = [TimeSpan]::FromSeconds(1.1)
         $closeTimer.Add_Tick({
@@ -181,5 +223,10 @@ $window.Add_Loaded({
     $inputBox.Focus()
 })
 
-# Show window (blocks until correctly closed)
+# Restore taskbar if script exits unexpectedly
+Register-EngineEvent -SourceIdentifier PowerShell.Exiting -Action {
+    Show-Taskbar
+} | Out-Null
+
 $window.ShowDialog() | Out-Null
+Show-Taskbar
